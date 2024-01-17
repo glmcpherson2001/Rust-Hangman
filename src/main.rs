@@ -5,26 +5,35 @@ fn main() {
     println!("Hello, Welcome to Hangman!\n");
     let mut correct_guesses: Vec<char> = Vec::new();
     let mut incorrect_guesses: Vec<char> = Vec::new();
-    let random_word = get_random_phrase();
-    let correct_letters: Vec<char> = random_word.chars().collect();
+    let random_phrase = get_random_phrase();
 
     loop {
 
-        println!("correct guess: {:?}", correct_guesses);
+        let underline_phrase = turn_phrase_to_underlines(&random_phrase, &correct_guesses);
 
-        println!("{}", turn_phrase_to_underlines(&random_word, &correct_guesses));
+        if underline_phrase.eq(&random_phrase){
+            println!("You Win the phrase is '{}'", random_phrase);
+            break;
+        }
 
-        let mut string_guess = String::new();
-        println!("Enter a Letter to Guess\n");
+        println!("Guessed Letters: {:?}", incorrect_guesses);
+        println!("{}", underline_phrase);
 
-        io::stdin().read_line(&mut string_guess).expect("Failed to read line");
+        println!("\n\n");
 
-        let letter_guess = string_guess.chars().next();
 
-        match letter_guess {
+        let string_guess = get_user_input("Guess a Letter: ".to_string());
+
+        let guessed_letter = string_guess.to_lowercase().chars().next();
+
+        match guessed_letter {
             Some(guess) if guess.is_alphabetic() => {
 
-                if random_word.contains(guess) {
+                if correct_guesses.contains(&guess) || incorrect_guesses.contains(&guess){
+                    println!("You've already guess '{}'", guess)
+
+                }
+                else if random_phrase.to_lowercase().contains(guess) {
                     println!("That's Correct! {} is in the word\n", guess);
                     correct_guesses.push(guess);
         
@@ -34,15 +43,11 @@ fn main() {
                 }
             } 
             Some(_) | None => {
-                print!("Please Provide a letter\n")
-            }        
+                print!("Please Provide a letter!\n")
+            }
         }
 
-        if correct_guesses == correct_letters{
-            println!("You Win the word is {}", random_word)
-        }
-
-
+        // Clear the console
         execute!(io::stdout(), terminal::Clear(terminal::ClearType::All)).unwrap();
 
     }
@@ -59,14 +64,27 @@ fn turn_phrase_to_underlines(phrase: &String, correct_letters: &Vec<char>) -> St
     let space = ' ';
 
     for char in phase_vec {
+        
         if char == space {
-            underline_string.push(space)
-        } else if correct_letters.contains(&char) {
-            underline_string.push(char)
-        } else {
-            underline_string.push('_')
+            underline_string.push(space);
+            continue;
         }
+        let lowercase_char = char.to_lowercase().next().unwrap();
+
+         if correct_letters.contains(&lowercase_char) {
+                 underline_string.push(char)
+         } else {
+                 underline_string.push('_')
+         }
     }
 
     underline_string.into_iter().collect()
+}
+
+fn get_user_input(message: String) -> String {
+    let mut user_input: String = String::new();
+    println!("{}", message);
+    io::stdin().read_line(&mut user_input).expect("Failed to read line");
+
+    return  user_input;
 }
