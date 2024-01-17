@@ -8,6 +8,7 @@ fn main() {
     let random_phrase = get_random_phrase();
 
     loop {
+        print_hangman(incorrect_guesses.len());
 
         let underline_phrase = turn_phrase_to_underlines(&random_phrase, &correct_guesses);
 
@@ -16,11 +17,13 @@ fn main() {
             break;
         }
 
-        println!("Guessed Letters: {:?}", incorrect_guesses);
-        println!("{}", underline_phrase);
+        if incorrect_guesses.len() >= HANGMAN_ARRAY.len() - 2 {
+            print!("You lost! The phrase was {}", random_phrase);
+            break;
+        }
 
-        println!("\n\n");
 
+        println!("Guessed Letters: {:?} \n\n {}\n", incorrect_guesses, underline_phrase);
 
         let string_guess = get_user_input("Guess a Letter: ".to_string());
 
@@ -34,7 +37,7 @@ fn main() {
 
                 }
                 else if random_phrase.to_lowercase().contains(guess) {
-                    println!("That's Correct! {} is in the word\n", guess);
+                    println!("That's Corr~ect! {} is in the word\n", guess);
                     correct_guesses.push(guess);
         
                 } else {
@@ -88,3 +91,99 @@ fn get_user_input(message: String) -> String {
 
     return  user_input;
 }
+
+fn print_hangman(lives: usize) {
+      println!("\n{}\n",HANGMAN_ARRAY[lives].to_string());
+}
+
+const HANGMAN_ARRAY: [&str; 8] = [HANGMAN_BEGINING, HANGMAN_HEAD, HANGMAN_BODY, HANGMAN_ARM_1, HANGMAN_ARM_2, HANGMAN_LEG_1, HANGMAN_LEG_2, HANGMAN_LOST];
+
+const HANGMAN_BEGINING: &str = r#"
+    _______
+    |/      |
+    |      
+    | 
+    |       
+    |       
+    |
+____|___
+"#;
+const HANGMAN_HEAD: &str = r#"
+    ________
+    |/      |
+    |      (_)
+    | 
+    |       
+    |       
+    |
+____|___
+"#;
+
+const HANGMAN_BODY: &str = r#"
+    ________
+    |/      |
+    |      (_)
+    |       |
+    |       |
+    |       
+    |
+____|___
+"#;
+
+const HANGMAN_ARM_1: &str = r#"
+    ________
+    |/      |
+    |      (_)
+    |      \|
+    |       |
+    |       
+    |
+____|___
+"#;
+
+const HANGMAN_ARM_2: &str = r#"
+    ________
+    |/      |
+    |      (_)
+    |      \|/
+    |       |
+    |       
+    |
+____|___
+"#;
+
+
+const HANGMAN_LEG_2: &str = r#"
+    ________
+    |/      |
+    |      (_)
+    |      \|/
+    |       |
+    |      / \
+    |
+____|___
+"#;
+
+
+
+const HANGMAN_LEG_1: &str = r#"
+    ________
+    |/      |
+    |      (_)
+    |      \|/
+    |       |
+    |      / 
+    |
+____|___
+"#;
+
+const HANGMAN_LOST: &str = r#"
+    ________
+    |/      |
+    |      (_)
+    |      \|/
+    |       |
+    |      / \
+    |
+____|___
+"#;
