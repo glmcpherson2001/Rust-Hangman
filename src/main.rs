@@ -1,4 +1,5 @@
 use std::io;
+use crossterm::{execute, terminal};
 
 fn main() {
     println!("Hello, Welcome to Hangman!\n");
@@ -42,6 +43,7 @@ fn main() {
         }
 
 
+        execute!(io::stdout(), terminal::Clear(terminal::ClearType::All)).unwrap();
 
     }
 }
@@ -60,7 +62,6 @@ fn turn_phrase_to_underlines(phrase: &String, correct_letters: &Vec<char>) -> St
         if char == space {
             underline_string.push(space)
         } else if correct_letters.contains(&char) {
-            println!("test");
             underline_string.push(char)
         } else {
             underline_string.push('_')
